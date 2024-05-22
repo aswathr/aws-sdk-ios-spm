@@ -34,6 +34,7 @@ let frameworksToChecksum = [
     "AWSChimeSDKIdentity": "283f439811d3000e623cb96d327d050618873e77c6933f7c492c534b237edd8c",
     "AWSChimeSDKMessaging": "5a75201470077ff74fcdca45322073d44aa8371d70d8af20f80c06ea7be6fb32",
     "AWSCloudWatch": "422c6aca6706424ef3940de8ef5acd4703b5be0dfb1a195aee7c62a698340f08",
+    "AWSCognito": "f04ace37404aeef1813d6b84855f3605d43ca312c54e738c4dbbe9d99b584183",
     "AWSCognitoAuth": "a07d07fda82aef6f6770cc7616e86c0fd054391858fc56d15eaec3d9d6052dc0",
     "AWSCognitoIdentityProvider": "8c54529319686d0e8fe825377c08c6133bd0ab7c8fee652ae61cf163d4cebb1c",
     "AWSCognitoIdentityProviderASF": "575ef535b9bbaff39c65c0e843cc390bacd302b448e9dfa94c1182054f1621f1",
@@ -93,6 +94,7 @@ let depdenencyMap: [String: [Target.Dependency]] = [
     "AWSChimeSDKIdentity": [.awsCore],
     "AWSChimeSDKMessaging": [.awsCore],
     "AWSCloudWatch": [.awsCore],
+    "AWSCognito": [.awsCore],
     "AWSCognitoAuth": [.awsCore, .awsCognitoIdentityProviderASF],
     "AWSCognitoIdentityProvider": [.awsCore, .awsCognitoIdentityProviderASF],
     "AWSCognitoIdentityProviderASF": [.awsCore],
@@ -171,12 +173,20 @@ func createProducts() -> [Product] {
     return products
 }
 
+func getRemoteTargetURL(framework: String) -> String {
+    
+    switch framework {
+    case "AWSCognito": return "https://github.com/aswathr/aws-sdk-ios-spm/releases/download/2.36.2f/AWSCognito-2.36.2.zip"
+    default: return "\(hostingUrl)\(framework)-\(latestVersion).zip"
+    }
+}
+
 func createTarget(framework: String, checksum: String = "") -> Target {
     buildMode != .remote ?
         Target.binaryTarget(name: framework,
                             path: "\(localPath)/\(framework).xcframework") :
         Target.binaryTarget(name: framework,
-                            url: "\(hostingUrl)\(framework)-\(latestVersion).zip",
+                            url: getRemoteTargetURL(framework: framework),
                             checksum: checksum)
 }
 
